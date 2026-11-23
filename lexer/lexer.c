@@ -1,4 +1,5 @@
 #include"lexer.h" 
+#define KEYWORD_NUM 15 //lol counted by my eyes :)
 
 char *cursor = NULL;
 size_t crow = 0;
@@ -22,7 +23,6 @@ const char * keywords[] = {
     "odd"
 };
 
-#define KEYWORD_NUM 15 //lol counted by my eyes :)
 
 const char symbols[] = {
     ';' , ':' , '=' , '<' , '>' , '+' , '-' , '*' , '/' , ',' , '(' , ')' , '\0'
@@ -193,19 +193,19 @@ token getToken(){
     return tok;
 }
 
-void printHead(){
-    fprintf(fo, "row\tcol\tToken_Type\tcontent\n");
-}
-
 void printToken_Type(){
     fprintf(fo, "TOKEN_ERROR = -1\nTOKEN_FILE_END = 0\nTOKEN_SKIP = 1\nTOKEN_KEYWORD = 2\nTOKEN_SYMBOL = 3\nTOKEN_ID = 4\nTOKEN_DIGITAL = 5\nNEED_PAGE = 6\n\n\n\n-------------------------------------------------------\n\n\n\n");
+}
+
+void printHead(){
+    fprintf(fo, "row\tcol\tToken_Type\tcontent\n");
 }
 
 void printToken(token tok){
     fprintf(fo, "%zu\t%zu\t%d\t        %s\n", tok.row, tok.col, tok.type, tok.data);
 }
 
-void startLexer(){
+void startLexer(bool if_close){
     if(!new_lexer()){
         closeLexer();
         printf("Lexer cant initiate!\n");
@@ -219,9 +219,34 @@ void startLexer(){
         printToken(tok);
     }while(tok.type != TOKEN_FILE_END);
     
-
-    closeLexer();
+    if(if_close){
+        closeLexer();
+    }
 }
+
+bool resetLexer(){
+    memset(buf, 0, sizeof(char) * PAGE_SIZE * PAGE_NUM + 1);
+    rewind(fp);
+
+    size_t read_num = fread(buf, sizeof(char), PAGE_SIZE * PAGE_NUM, fp);
+    if(read_num == PAGE_SIZE * PAGE_NUM){
+        buf[read_num] = '@';
+    }else if(feof(fp)){
+        buf[read_num] = '\0';
+    }else if (ferror(fp)){
+        printf("fread failed ,something's wrong\n");
+        return false;
+    }
+
+    cursor = buf;
+    crow = 1;
+    ccol = 1;
+    pcnt = 1;
+
+    fprintf(fo, "\n\n\n\n-------------------------------------------------------\n\n\n\nHere comes Parser!!!\n\n\n\n");
+    return true;
+}
+    
 
 void closeLexer(){
     closeBuf();

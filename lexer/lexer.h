@@ -6,6 +6,8 @@
 
 
 typedef enum{
+    TOKEN_PARSER_ERROR = -3,
+    TOKEN_PARSER_WARN = -2,
     TOKEN_ERROR = -1,
     TOKEN_FILE_END = 0,
     TOKEN_SKIP,
@@ -13,7 +15,9 @@ typedef enum{
     TOKEN_SYMBOL,
     TOKEN_ID,
     TOKEN_DIGITAL,
-    NEED_PAGE
+    NEED_PAGE,
+    TERMINAL,
+    NOT_A_TERMINAL
 } Token_Type;
 
 typedef struct{
@@ -34,6 +38,9 @@ bool is_keyword(char * id);
 void printToken(token tok);
 void printHead();
 void printToken_Type();
+void startLexer(bool if_close);
+bool resetLexer();
+
 
 static inline bool is_char(char c){
     return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'));

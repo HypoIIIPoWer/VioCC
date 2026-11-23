@@ -1,6 +1,6 @@
-#include"lexer.h"
+#include"parser.h"
 
 int main(){
-    startLexer();
+    startParser();
     return 0;
 }

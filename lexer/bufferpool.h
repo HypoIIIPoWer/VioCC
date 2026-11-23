@@ -23,7 +23,6 @@ extern char pcnt;
 bool new_buf();
 bool getPage();
 void closeBuf();
-void startLexer();
 
 
 static inline char getPcnt() { pcnt = (pcnt == 0) ? 1 : 0;    return pcnt;}
